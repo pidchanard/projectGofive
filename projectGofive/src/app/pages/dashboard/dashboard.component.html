@@ -7,29 +7,119 @@
 
     <form class="flex items-center gap-4 w-full max-w-full">
       <div class="relative flex-1 w-full max-w-full">
-        <input [(ngModel)]="searchKeyword" name="search" class="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5" placeholder="Search..." />
+    
+          <input 
+          [(ngModel)]="searchKeyword" 
+          name="searchKeyword" 
+          (keydown.enter)="onSearchChange()"  
+          class="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5" 
+          placeholder="Search by Firstname or Lastname..." />
+          
       </div>
+   
+
       <button (click)="openModal()" type="button" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
         Add Users +
       </button>
 
       <!-- Sort by / Saved search (UI only) -->
-      <p class="whitespace-nowrap">sort by</p>
-      <a href="#" class="flex items-center p-3 text-gray-700">
-        <svg class="w-4 h-6 text-gray-800" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-      </a>
+      <!-- ปุ่มเปิดเมนู -->
+      <button id="dropdownRadioButton1" data-dropdown-toggle="dropdownRadioMenu1"
+        class="text-black focus:outline-none font-normal rounded-lg text-base px-5 py-2.5 text-center inline-flex items-center"
+        type="button">
+        Sort by
+        <svg class="w-2.5 h-2.5 ms-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+        </svg>
+      </button>
+
+      <!-- เมนู -->
+      <div id="dropdownRadioMenu1"
+        class="z-10 hidden w-25 bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
+        <ul class="p-3 space-y-1 text-sm text-gray-700" aria-labelledby="dropdownRadioButton1">
+          <li>
+            <div class="flex items-center p-2 rounded-sm cursor-pointer"
+                (click)="onSortChange('desc')">
+              <input id="sort-desc" type="radio" name="sort-order" checked
+                class="w-4 h-4 bg-gray-100 border-gray-300">
+              <label for="sort-desc" class="ms-2 text-sm font-medium text-gray-900">DESC</label>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center p-2 rounded-sm cursor-pointer"
+                (click)="onSortChange('asc')">
+              <input id="sort-asc" type="radio" name="sort-order"
+                class="w-4 h-4 bg-gray-100 border-gray-300">
+              <label for="sort-asc" class="ms-2 text-sm font-medium text-gray-900">ASC</label>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
+    
+    
+  <button id="dropdownRadioBgHoverButton" data-dropdown-toggle="dropdownRadioBgHover" class="text-black   focus:outline-none font-normal rounded-lg text-base px-5 py-2.5 text-center inline-flex items-center   " type="button">Save Search 
+    <svg class="w-2.5 h-2.5 ms-3 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+    </svg>
+  </button>        
+    
+  <!-- Dropdown menu -->
+  <div id="dropdownRadioBgHover" class="z-10 hidden w-25 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-600 dark:divide-gray-600">
+    <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownRadioBgHoverButton">
+     
+      <li>
+        <div class="flex items-center p-2 rounded-sm text-gray-700 ">
+            <input checked id="default-radio-5" type="radio" value="" name="default-radio" class="w-4 h-4  bg-gray-100 border-gray-300     dark:bg-gray-600 dark:border-gray-500">
+            <label for="default-radio-5" class="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300">DESC</label>
+        </div>
+      </li>
+      <li>
+        <div class="flex items-center p-2 rounded-sm text-gray-700 ">
+            <input id="default-radio-6" type="radio" value="" name="default-radio" class="w-4 h-4  bg-gray-100 border-gray-300     dark:bg-gray-600 dark:border-gray-500">
+            <label for="default-radio-6" class="w-full ms-2 text-sm font-medium text-gray-900 rounded-sm dark:text-gray-300">ASC</label>
+        </div>
+      </li>
+    </ul>
+</div>
+  
+ 
+  
+  
       
-      <button type="button" (click)="saveCurrentSearch()">💾 Save Search</button>
-
-      <select #roleSelect (change)="applyFilter(roleSelect.value)" class="border px-2 py-1 rounded text-sm">
-        <option value="">All Roles</option>
-        <option value="1">Super Admin</option>
-        <option value="2">HR Admin</option>
-        <option value="3">Admin</option>
-        <option value="4">Employeee</option>
-      </select>
+ 
 
 
+        
+        <button id="dropdownMenuIconHorizontalButton"  data-dropdown-toggle="dropdownDotsHorizontal"  class=" inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 rounded-lg   focus:outline-none    " type="button"> 
+          <svg class="w-6 h-6 text-gray-600 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10.83 5a3.001 3.001 0 0 0-5.66 0H4a1 1 0 1 0 0 2h1.17a3.001 3.001 0 0 0 5.66 0H20a1 1 0 1 0 0-2h-9.17ZM4 11h9.17a3.001 3.001 0 0 1 5.66 0H20a1 1 0 1 1 0 2h-1.17a3.001 3.001 0 0 1-5.66 0H4a1 1 0 1 1 0-2Zm1.17 6H4a1 1 0 1 0 0 2h1.17a3.001 3.001 0 0 0 5.66 0H20a1 1 0 1 0 0-2h-9.17a3.001 3.001 0 0 0-5.66 0Z"/>
+          </svg>          
+        </button>
+        
+        <!-- Dropdown menu -->
+        <div id="dropdownDotsHorizontal"  #roleSelect  class="bg-white z-10 hidden  divide-y  rounded-lg shadow-sm w-44 " >
+          <ul class="py-2 text-sm text-gray-700 " aria-labelledby="dropdownDividerButton">
+            <li>
+              <a  class="block px-4 py-2  dark:hover:text-blue-600" value="">All Roles</a>
+            </li>
+            <li>
+              <a  class="block px-4 py-2 dark:hover:text-blue-600" value="1">Super Admin</a>
+            </li>
+            <li>
+              <a  class="block px-4 py-2 dark:hover:text-blue-600" value="2">HR Admin</a>
+            </li>
+            <li>
+              <a class="block px-4 py-2  dark:hover:text-blue-600" value="3">Admin</a>
+            </li>
+            <li>
+              <a  class="block px-4 py-2  dark:hover:text-blue-600" value="4">Employeee</a>
+            </li>
+          </ul>
+           
+        </div>
+        
       <!-- <p class="whitespace-nowrap">Saved search</p>
       <a href="#" class="flex items-center p-3 text-gray-700">
         <svg class="w-4 h-6 text-gray-800" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>

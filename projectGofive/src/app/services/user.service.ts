@@ -13,8 +13,10 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   // ฟังก์ชันสำหรับดึงข้อมูลผู้ใช้ทั้งหมด
-  getAllUsers(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/alluser`);
+  getAllUsers(sortOrder: 'asc' | 'desc' = 'asc'): Observable<any> {
+    return this.http.get(`${this.apiUrl}/alluser`, {
+      params: { sortOrder }
+    });
   }
 
   // ฟังก์ชันสำหรับเพิ่มผู้ใช้ใหม่
@@ -40,12 +42,13 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/DataTable`, request);
   }
 
+  // ฟังก์ชันการค้นหาผู้ใช้
   searchUsers(keyword: string) {
-    return this.http.get<Usery[]>(`http://localhost:5229/api/User/search?keyword=${keyword}`);
+    return this.http.get<Usery[]>(`${this.apiUrl}/search?keyword=${keyword}`);
   }
   
   saveSearch(request: { keyword: string; savedBy: number }) {
-    return this.http.post(`${this.apiUrl}/user/savesearch`, request);
+    return this.http.post(`${this.apiUrl}/save-search`, request);
   }
   
   filterUsers(request: { roleId: number | null }): Observable<Usery[]> {

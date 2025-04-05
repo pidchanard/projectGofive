@@ -21,9 +21,72 @@ export class DashboardComponent implements OnInit {
   currentPage = 1;
   totalItems = 0;
   paginatedUsers: Usery[] = [];
-  searchKeyword: string = '';
+  searchKeyword: string = '';  // คำค้นหาจากผู้ใช้
+  searchResults: Usery[] = [];  // เก็บผลลัพธ์จากการค้นหา
+  isSearchResultsArray: boolean = false; 
+  allUsers: Usery[] = [];
+  sortOrder: 'asc' | 'desc' = 'asc';
+
   filteredUsers: Usery[] = [];
   
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+
+    this.loadUsers(); 
+  }
+  
+  onSortChange(order: 'asc' | 'desc') {
+    this.sortOrder = order;
+    this.loadUsers(order);
+  }
+
+  onSearchChange() {
+    if (this.searchKeyword.trim()) {
+      console.log('Searching for:', this.searchKeyword);  // ตรวจสอบคำค้นหาที่กรอก
+      this.searchResults = this.allUsers.filter((user) =>
+        user.firstName.toLowerCase().includes(this.searchKeyword.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(this.searchKeyword.toLowerCase())
+      );
+      console.log('Filtered results:', this.searchResults);  // ตรวจสอบผลลัพธ์ที่กรองแล้ว
+    } else {
+      // ถ้าไม่ค้นหาแสดงทั้งหมด
+      this.searchResults = [...this.allUsers];
+    }
+    this.updatePaginatedUsers();  // อัปเดตการแสดงผลลัพธ์
+  }
+  
+  
+
+  // ฟังก์ชันค้นหาผู้ใช้
+  searchUsers(keyword: string) {
+    console.log('Searching for:', keyword);  // ตรวจสอบคำค้นหาที่ส่งไป
+    this.userService.searchUsers(keyword).subscribe(
+      (response: any) => {
+        console.log('API response:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
+        this.searchResults = response.$values?.map((user: any) => ({
+          userId: user.userId,
+          username: user.username,
+          password: user.password,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          roleId: user.roleId,
+          role: user.role,  // คุณสามารถเก็บข้อมูล role ใน searchResults ได้
+          userPermissions: user.permissions ? user.permissions.$values : []
+        })) || [];  // ทำการแมปข้อมูลให้ตรงกับ Usery interface
+  
+        this.isSearchResultsArray = Array.isArray(this.searchResults);  // ตรวจสอบว่าเป็น array
+      },
+      (error) => {
+        console.error('Error fetching users:', error);
+      }
+    );
+  }
+  
+  
+
 
   onItemsPerPageChange(): void {
     this.currentPage = 1;
@@ -45,11 +108,6 @@ export class DashboardComponent implements OnInit {
   }
   
   
-  constructor(private userService: UserService) {}
-
-  ngOnInit(): void {
-    this.loadUsers();
-  }
 
   openModal() {
     this.isModalOpen = true;
@@ -62,26 +120,30 @@ export class DashboardComponent implements OnInit {
     this.newUser = {};
   }
 
-  loadUsers(): void {
-    this.userService.getAllUsers().subscribe({
-      next: (data: any) => {
-        this.users = data.$values ?? data ?? [];
-        this.filteredUsers = [...this.users]; // 🔥 กำหนดให้ตรงตอนโหลด
-        this.totalItems = this.filteredUsers.length;
-        this.updatePaginatedUsers();
-      },
-      error: (err) => {
-        console.error('❌ Error loading users:', err);
-      }
-    });
-  }
+  loadUsers(order: 'asc' | 'desc' = 'desc'): void {
+  this.userService.getAllUsers(order).subscribe({
+    next: (data: any) => {
+      this.allUsers = data.$values ?? data ?? [];
+      this.searchResults = [...this.allUsers];
+      this.totalItems = this.searchResults.length;
+      this.updatePaginatedUsers();
+    },
+    error: (err) => {
+      console.error('❌ Error loading users:', err);
+    }
+  });
+}
+  
   
 
   updatePaginatedUsers(): void {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedUsers = this.filteredUsers.slice(startIndex, endIndex);
+    this.paginatedUsers = this.searchResults.slice(startIndex, endIndex);
+    
+    console.log('Paginated users:', this.paginatedUsers);  // ตรวจสอบค่าที่จะถูกแสดงในตาราง
   }
+  
   
   
 
@@ -211,7 +273,7 @@ export class DashboardComponent implements OnInit {
   }
 
   editUser(userId: number): void {
-    const selectedUser = this.users.find(u => u.userId === userId);
+    const selectedUser = this.allUsers.find(u => u.userId === userId);
     if (selectedUser) {
       this.newUser = {
         ...selectedUser,
@@ -281,34 +343,9 @@ export class DashboardComponent implements OnInit {
     return permissions;
   }
 
-  onSearchChange(): void {
-    this.userService.searchUsers(this.searchKeyword).subscribe({
-      next: (users) => {
-        this.users = users;
-        this.totalItems = users.length;
-        this.updatePaginatedUsers();
-      },
-      error: (err) => {
-        console.error('❌ Search failed:', err);
-      }
-    });
-  }
+
   
-  saveCurrentSearch(): void {
-    const request = {
-      keyword: this.searchKeyword,
-      savedBy: 1 // 🔧 mock user ID ที่นี่
-    };
-  
-    this.userService.saveSearch(request).subscribe({
-      next: () => {
-        Swal.fire('✅ Saved!', 'Your search has been saved.', 'success');
-      },
-      error: () => {
-        Swal.fire('❌ Error', 'Failed to save search.', 'error');
-      }
-    });
-  }
+
   
   applyFilter(roleId: string): void {
     const parsedRoleId = parseInt(roleId, 10);

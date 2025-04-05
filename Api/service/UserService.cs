@@ -70,13 +70,25 @@ namespace Api.Data
 
             return user;
         }
-public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+   public async Task<IEnumerable<UserDto>> GetAllUsersAsync(string sortOrder = "asc")
 {
-    var users = await _context.Users
+    var usersQuery = _context.Users
         .Include(u => u.Role)
         .Include(u => u.UserPermissions)
             .ThenInclude(up => up.Permission)
-        .ToListAsync();
+        .AsQueryable();
+
+    // ✅ Apply sorting by UserId
+    if (sortOrder.ToLower() == "desc")
+    {
+        usersQuery = usersQuery.OrderByDescending(u => u.UserId);
+    }
+    else
+    {
+        usersQuery = usersQuery.OrderBy(u => u.UserId);
+    }
+
+    var users = await usersQuery.ToListAsync();
 
     var result = users.Select(u => new UserDto
     {
@@ -104,6 +116,7 @@ public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
 
     return result;
 }
+
 
 
 

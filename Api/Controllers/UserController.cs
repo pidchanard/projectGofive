@@ -69,10 +69,10 @@ namespace Api.Controllers
     // GET: api/user getalluser
 
     [HttpGet("alluser")]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetAllUsers([FromQuery] string sortOrder = "asc")
     {
-        var users = await _userService.GetAllUsersAsync();
-        return Ok(users); // ✅ JSON format will be exactly as you want
+        var users = await _userService.GetAllUsersAsync(sortOrder);
+        return Ok(users);
     }
 
 
