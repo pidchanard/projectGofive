@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FlowbiteService } from '../../flowbite.service';
 import { DocumentService } from './../../services/document.service';
-import { MyDocuments, MyDocumentsy } from '../../models/document.model'; // นำเข้า Document model
+import { DocumentRequest, MyDocuments, MyDocumentsy } from '../../models/document.model'; // นำเข้า Document model
 import { initFlowbite } from 'flowbite';
 import Swal from 'sweetalert2';
 
@@ -15,13 +15,17 @@ export class DocumentsComponent implements OnInit {
   selectedDocument: MyDocuments | null = null;
   isEditModalOpen = false;
   isModalOpen = false;
-  documentss: MyDocuments[] = [];
+  paginatedDoc: MyDocumentsy[] = [];
   documents: MyDocumentsy[] = [];
-  // กำหนดให้ document ใช้ interface Documents
+  Math = Math;
+  currentPage = 1;
+  itemsPerPage = 6;
+  totalItems = 0;
+  
   document: MyDocuments = {
     Doc_name: '',
-    DocDate: '',    // กำหนดให้เป็น string
-    DocDescription: '' // แก้ไขให้ใช้ชื่อฟิลด์ตามที่กำหนดใน Documents interface (ตัว D ตัวใหญ่)
+    DocDate: '',    
+    DocDescription: '' 
   };
 
   constructor(
@@ -35,6 +39,28 @@ export class DocumentsComponent implements OnInit {
     });
     this.loadDocuments();
   }
+  
+  onItemsPerPageChange(): void {
+    this.currentPage = 1;
+    this.updatePaginatedDocuments();
+  }
+
+  // Go to previous page
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePaginatedDocuments();
+    }
+  }
+
+  // Go to next page
+  nextPage(): void {
+  if (this.currentPage * this.itemsPerPage < this.totalItems) {
+    this.currentPage++;
+    this.updatePaginatedDocuments();
+  }
+}
+  
   openEditModal(doc: any) {
     this.selectedDocument = {
       DocId: doc.docId, // ✅ แปลงชื่อให้ตรงกับ Interface
@@ -48,26 +74,25 @@ export class DocumentsComponent implements OnInit {
     this.selectedDocument = null;
     this.isEditModalOpen = false;
   }
-  loadDocuments() {
-    this.documentService.getAllDocuments().subscribe(
-      (res: any) => {
-        console.log('📦 API raw response:', res);
-    
-        if (Array.isArray(res)) {
-          // ✅ เป็น Array ตรงๆ
-          this.documents = res;
-        } else if (res?.$values) {
-          // ✅ เป็น object ที่มี $values
-          this.documents = res.$values;
-        } else {
-          console.error('Invalid response format');  // ⚠️ ไม่เข้า format ที่คาดไว้
-        }
+  loadDocuments(): void {
+    this.documentService.getAllDocuments().subscribe({
+      next: (data: any) => {
+        this.documents = data.$values ?? data ?? [];
+        this.totalItems = this.documents.length;
+        this.updatePaginatedDocuments(); // ✅ คำนวณแบ่งหน้า
       },
-      (err) => {
+      error: (err) => {
         console.error('API error:', err);
       }
-    );
+    });
   }
+
+  updatePaginatedDocuments(): void {
+  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  const endIndex = startIndex + this.itemsPerPage;
+  this.paginatedDoc = this.documents.slice(startIndex, endIndex); // ✅ ใช้จาก documents
+}
+  
   // ฟังก์ชันเปิด modal
   openModal() {
     this.isModalOpen = true;

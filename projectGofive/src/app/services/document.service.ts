@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 // ✅ แก้ตรงนี้: import type ที่คุณสร้างเอง
-import { MyDocuments } from '../models/document.model';
+import { DocumentRequest, MyDocuments } from '../models/document.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class DocumentService {
   getAllDocuments(): Observable<MyDocuments[]> {
     return this.http.get<MyDocuments[]>(`${this.apiUrl}/alldoc`);
   }
-
+  
   getDocumentById(DocId: number): Observable<MyDocuments> {
     return this.http.get<MyDocuments>(`${this.apiUrl}/${DocId}`);
   }
@@ -38,4 +38,9 @@ export class DocumentService {
     let params = new HttpParams().set('keyword', keyword);
     return this.http.get<MyDocuments[]>(`${this.apiUrl}/search`, { params });
   }
+
+  getPaginatedDoc(request: DocumentRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/DataTable`, request);
+  }
+  
 }

@@ -130,7 +130,7 @@
                 </thead>
                 <tbody>
                     <!-- Document Row -->
-                    <tr class="border-b hover:bg-gray-50 dark:border-gray-300 w-full" *ngFor="let document of documents">
+                    <tr class="border-b hover:bg-gray-50 dark:border-gray-300 w-full" *ngFor="let document of paginatedDoc">
                         <td class="p-4 text-left">
                             <div class="flex items-center space-x-2">
                               <div class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg bg-white shadow-sm">
@@ -165,13 +165,34 @@
                     </tr>
                 </tbody>
             </table>
-<!-- 
-            <div class="flex justify-between mt-4">
-                <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-4 py-2 bg-blue-500 text-white rounded">Previous</button>
-                <span>Page {{ currentPage }} of {{ Math.ceil(totalItems / itemsPerPage) }}</span>
-                <button (click)="nextPage()" [disabled]="currentPage * itemsPerPage >= totalItems" class="px-4 py-2 bg-blue-500 text-white rounded">Next</button>
-              </div> -->
-              
+             <!-- Pagination (Flowbite-style) -->
+
+      <div class="flex justify-between items-center p-4">
+        <div class="flex items-center gap-2">
+          <label for="itemsPerPage" class="text-sm text-gray-600">Items per page:</label>
+          <select [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()" class="border p-1 rounded">
+            <option [value]="6">6</option>
+            <option [value]="10">10</option>
+            <option [value]="25">25</option>
+          </select>
+        </div>
+
+        <div class="text-sm text-gray-600">
+          {{ ((currentPage - 1) * itemsPerPage) + 1 }} -
+          {{ Math.min(currentPage * itemsPerPage, totalItems) }}
+          of {{ totalItems }}
+        </div>
+
+        <div class="flex gap-2">
+          <button (click)="prevPage()" [disabled]="currentPage === 1" class="p-2 text-gray-600 hover:text-black disabled:opacity-30">
+            ←
+          </button>
+          <button (click)="nextPage()" [disabled]="(currentPage * itemsPerPage) >= totalItems" class="p-2 text-gray-600 hover:text-black disabled:opacity-30">
+            →
+          </button>
+        </div>
+      </div>
+
         </div>
         
     </main>
