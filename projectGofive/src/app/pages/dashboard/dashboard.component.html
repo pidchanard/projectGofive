@@ -146,7 +146,10 @@
         </thead>
         <tbody class="bg-white">
           <tr *ngFor="let user of paginatedUsers">
-            <td class="px-6 py-4">{{ user.firstName }} {{ user.lastName }}</td>
+            <td class="px-6 py-4">{{ user.firstName }} {{ user.lastName }}
+              <p class="text-xs text-gray-400">{{user.email}}</p>
+            </td>
+
             <td class="px-6 py-4">
               <button class="text-white bg-blue-500 hover:bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-500 focus:outline-none " (click)="cycleRole(user)">
                 {{ user.role?.roleName || 'No Role' }}

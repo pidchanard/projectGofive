@@ -15,6 +15,7 @@ export class DocumentsComponent implements OnInit {
   selectedDocument: MyDocuments | null = null;
   isEditModalOpen = false;
   isModalOpen = false;
+  documentss: MyDocuments[] = [];
   documents: MyDocumentsy[] = [];
   // กำหนดให้ document ใช้ interface Documents
   document: MyDocuments = {
@@ -33,6 +34,19 @@ export class DocumentsComponent implements OnInit {
       initFlowbite();
     });
     this.loadDocuments();
+  }
+  openEditModal(doc: any) {
+    this.selectedDocument = {
+      DocId: doc.docId, // ✅ แปลงชื่อให้ตรงกับ Interface
+      Doc_name: doc.doc_name,
+      DocDate: doc.docDate,
+      DocDescription: doc.docDescription
+    };
+    this.isEditModalOpen = true;
+  }
+  closeEditModal() {
+    this.selectedDocument = null;
+    this.isEditModalOpen = false;
   }
   loadDocuments() {
     this.documentService.getAllDocuments().subscribe(
@@ -104,5 +118,56 @@ export class DocumentsComponent implements OnInit {
       Swal.fire('Error', 'Please fill all fields.', 'error');
     }
   }
+  onUpdate() {
+    if (
+      this.selectedDocument &&
+      this.selectedDocument.DocId && // ✅ ต้องมี ID ด้วย
+      this.selectedDocument.Doc_name &&
+      this.selectedDocument.DocDate &&
+      this.selectedDocument.DocDescription
+    ) {
+      this.documentService.updateDocument(this.selectedDocument!.DocId, this.selectedDocument!).subscribe( 
+        (res) => {
+          Swal.fire('Updated!', 'Document updated successfully', 'success');
+          this.closeEditModal();
+          this.loadDocuments(); // รีโหลดข้อมูลหลังแก้ไข
+        },
+        (err) => {
+          console.error(err);
+          Swal.fire('Error', 'Failed to update document', 'error');
+        }
+      );
+    } else {
+      Swal.fire('Error', 'Please fill all fields.', 'error');
+    }
+  }
+  confirmDelete(DocId: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this document!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#aaa',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deleteDocument(DocId);
+      }
+    });
+  }
   
+  
+  deleteDocument(docId: number) {
+    this.documentService.deleteDocument(docId).subscribe(
+      () => {
+        Swal.fire('Deleted!', 'Document has been deleted.', 'success');
+        this.loadDocuments();
+      },
+      (error) => {
+        console.error('Delete error:', error);
+        Swal.fire('Error', 'Failed to delete document.', 'error');
+      }
+    );
+  }
 }
