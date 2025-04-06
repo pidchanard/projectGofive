@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<UserService>();  // หรือ AddTransient, AddSingleton ตามความเหมาะสม
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<PermissionService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 // การตั้งค่า DbContext สำหรับการเชื่อมต่อกับ SQL Server
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
