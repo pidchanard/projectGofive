@@ -92,5 +92,17 @@ namespace Api.Data
             .ToListAsync();
     }
 
+       public async Task<List<Document>> GetAllDocumentsAsync(string order)
+        {
+            var documents = _context.Documents.AsQueryable();
+
+            if (order == "asc")
+                documents = documents.OrderBy(d => d.DocDate);  // หรือ Field ที่ต้องการ
+            else
+                documents = documents.OrderByDescending(d => d.DocDate);
+
+            return await documents.ToListAsync();
+        }
+
     }
 }

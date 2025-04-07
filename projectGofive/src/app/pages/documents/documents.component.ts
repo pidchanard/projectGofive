@@ -21,7 +21,13 @@ export class DocumentsComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 6;
   totalItems = 0;
-  
+  searchKeyword: string = '';
+  searchResults: MyDocumentsy[] = [];
+  isSearchResultsArray: boolean = false;
+  allDoc: MyDocumentsy[] = [];
+  sortOrder: 'asc' | 'desc' = 'asc';
+  noSearchResults: boolean = false;
+
   document: MyDocuments = {
     Doc_name: '',
     DocDate: '',    
@@ -38,6 +44,52 @@ export class DocumentsComponent implements OnInit {
       initFlowbite();
     });
     this.loadDocuments();
+  }
+  onSearchChange() {
+    const keyword = this.searchKeyword.trim();
+  
+    if (!keyword) {
+      this.noSearchResults = false;
+      this.loadDocuments(); // ถ้าไม่กรอก keyword แสดงทั้งหมด
+      return;
+    }
+  
+    this.documentService.searchDocuments(keyword).subscribe(
+      (response: any) => {
+        this.documents = response.$values ?? response ?? [];
+        this.noSearchResults = this.documents.length === 0;
+        this.totalItems = this.documents.length;
+        this.currentPage = 1;
+        this.updatePaginatedDocuments(); // ✅ แสดงผลแบบแบ่งหน้า
+      },
+      (error) => {
+        console.error('Error fetching document:', error);
+      }
+    );
+  }
+      onSortChange(order: 'asc' | 'desc') {
+        this.sortOrder = order;
+        this.loadDocuments(order);
+      }
+
+  searchDocuments(keyword: string) {
+    console.log('Searching for:', keyword);  // ตรวจสอบคำค้นหาที่ส่งไป
+    this.documentService.searchDocuments(keyword).subscribe(
+      (response: any) => {
+        console.log('API response:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
+        this.searchResults = response.$values?.map((doc: any) => ({
+          docId: doc.docId,
+          doc_name: doc.doc_name,
+          docDate: doc.docDate,
+          docDescription: doc.docDescription,
+        })) || [];  
+  
+        this.isSearchResultsArray = Array.isArray(this.searchResults);  
+      },
+      (error) => {
+        console.error('Error fetching document:', error);
+      }
+    );
   }
   
   onItemsPerPageChange(): void {
@@ -74,24 +126,45 @@ export class DocumentsComponent implements OnInit {
     this.selectedDocument = null;
     this.isEditModalOpen = false;
   }
-  loadDocuments(): void {
-    this.documentService.getAllDocuments().subscribe({
+  loadDocuments(order: 'asc' | 'desc' = 'desc'): void {
+    this.documentService.getAllDocuments(order).subscribe({
       next: (data: any) => {
         this.documents = data.$values ?? data ?? [];
         this.totalItems = this.documents.length;
-        this.updatePaginatedDocuments(); // ✅ คำนวณแบ่งหน้า
+        this.updatePaginatedDocuments();
       },
       error: (err) => {
         console.error('API error:', err);
       }
     });
   }
-
-  updatePaginatedDocuments(): void {
-  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-  const endIndex = startIndex + this.itemsPerPage;
-  this.paginatedDoc = this.documents.slice(startIndex, endIndex); // ✅ ใช้จาก documents
-}
+  filterByMonth(month: string): void {
+    this.documentService.getAllDocuments().subscribe({
+      next: (data: any) => {
+        const documents = data.$values ?? data ?? [];
+  
+        // Filter เฉพาะเดือนที่เลือกจาก DocDate
+        this.documents = documents.filter((doc: any) => {
+          const docMonth = new Date(doc.docDate).getMonth() + 1;
+          const formattedMonth = docMonth < 10 ? '0' + docMonth : '' + docMonth;
+          return formattedMonth === month;
+        });
+  
+        this.totalItems = this.documents.length;
+        this.currentPage = 1;
+        this.updatePaginatedDocuments();
+      },
+      error: (err) => {
+        console.error('Filter by month error:', err);
+      }
+    });
+  }
+  
+    updatePaginatedDocuments(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedDoc = this.documents.slice(startIndex, endIndex); // ✅ ใช้จาก documents
+  }
   
   // ฟังก์ชันเปิด modal
   openModal() {

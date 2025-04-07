@@ -84,5 +84,12 @@ namespace Api.Controllers
             return Ok(documents);
         }
         
+       [HttpGet]
+        public async Task<IActionResult> GetAllDocuments([FromQuery] string order = "desc")
+        {
+            var documents = await _documentService.GetAllDocumentsAsync(order);
+            return Ok(documents);
+        }
+
     }
 }

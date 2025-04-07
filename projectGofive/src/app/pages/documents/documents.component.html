@@ -7,31 +7,48 @@
         <form class="flex flex-wrap items-center w-full gap-2">
     
             <!-- Search input -->
-            <div class="relative flex-grow min-w-[200px] max-w-full">
-                <input type="text"
-                  
-                    class="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5"
-                    placeholder="Search documents" />
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
-                    </svg>
-                </div>
+            <div class="relative flex-1 w-full max-w-full">
+                <input 
+                [(ngModel)]="searchKeyword" 
+                name="searchKeyword" 
+                class="bg-gray-50 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5"
+                (input)="onSearchChange()"  
+                placeholder="Search document" />
             </div>
-          
-            <!-- Sort by -->
-            <div class="flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
-                <p class="text-sm text-gray-600">Sort by</p>
-                <a href="#" class="flex items-center p-2">
-                    <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </a>
-            </div>
-          
+                    
+                    <!-- ปุ่มเปิดเมนู -->
+            <button id="dropdownRadioButton1" data-dropdown-toggle="dropdownRadioMenu1"
+            class="text-black focus:outline-none font-normal rounded-lg text-base px-5 py-2.5 text-center inline-flex items-center"
+            type="button">
+            Sort by
+            <svg class="w-2.5 h-2.5 ms-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+            </svg>
+            </button>
+
+                <!-- เมนู sort by -->
+                <div id="dropdownRadioMenu1"
+                class="z-10 hidden w-25 bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
+                <ul class="p-3 space-y-1 text-sm text-gray-700" aria-labelledby="dropdownRadioButton1">
+                    <li>
+                    <div class="flex items-center p-2 rounded-sm cursor-pointer"
+                        (click)="onSortChange('desc')">
+                        <input id="sort-desc" type="radio" name="sort-order" checked
+                        class="w-4 h-4 bg-gray-100 border-gray-300">
+                        <label for="sort-desc" class="ms-2 text-sm font-medium text-gray-900">DESC</label>
+                    </div>
+                    </li>
+                    <li>
+                    <div class="flex items-center p-2 rounded-sm cursor-pointer"
+                        (click)="onSortChange('asc')">
+                        <input id="sort-asc" type="radio" name="sort-order"
+                        class="w-4 h-4 bg-gray-100 border-gray-300">
+                        <label for="sort-asc" class="ms-2 text-sm font-medium text-gray-900">ASC</label>
+                    </div>
+                    </li>
+                </ul>
+    </div>
+
             <!-- Filter icon -->
             <a href="#" class="flex items-center p-2 flex-shrink-0">
                 <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24"
@@ -72,24 +89,36 @@
             <!-- Right Section: Dropdown and Add Button -->
             <div class="flex items-center space-x-4 ml-auto">
                  <!-- This Month Dropdown -->
-              <!--Button This month-->
-        <button id="dropdownThismonth" data-dropdown-toggle="dropdownMonth" class="ml-145 text-gray-500 border focus:outline-none font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-none" type="button">
+        <!-- ปุ่ม Dropdown -->
+            <button id="dropdownThismonth"
+            data-dropdown-toggle="dropdownMonth"
+            class="ml-145 text-gray-500 border focus:outline-none font-medium text-sm px-5 py-2.5 text-center inline-flex items-center"
+            type="button">
             This Month
-            <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+            <svg class="w-2.5 h-2.5 ms-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
             </svg>
-        </button>
-        
-        <!-- Dropdown menu -->
-        <div id="dropdownMonth" class="absolute right-0 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
-            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownThismonth">
-                <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a></li>
-                <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a></li>
-                <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a></li>
-                <li><a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a></li>
+            </button>
+
+            <!-- เมนู dropdown รายชื่อเดือน -->
+            <div id="dropdownMonth"
+            class="absolute right-0 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
+            <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownThismonth">
+            <li><p (click)="loadDocuments()" class="block px-4 py-2 hover:bg-gray-100 font-bold cursor-pointer">All Months</p></li>
+            <li><p (click)="filterByMonth('01')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">January</p></li>
+            <li><p (click)="filterByMonth('02')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">February</p></li>
+            <li><p (click)="filterByMonth('03')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">March</p></li>
+            <li><p (click)="filterByMonth('04')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">April</p></li>
+            <li><p (click)="filterByMonth('05')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">May</p></li>
+            <li><p (click)="filterByMonth('06')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">June</p></li>
+            <li><p (click)="filterByMonth('07')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">July</p></li>
+            <li><p (click)="filterByMonth('08')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">August</p></li>
+            <li><p (click)="filterByMonth('09')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">September</p></li>
+            <li><p (click)="filterByMonth('10')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">October</p></li>
+            <li><p (click)="filterByMonth('11')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">November</p></li>
+    <li><p (click)="filterByMonth('12')" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">December</p></li>
             </ul>
-        </div>
-    
+            </div>
             <!-- Documents Dropdown -->
             <!-- Document Button -->
         <button id="dropdownDocument" data-dropdown-toggle="dropdownDoc" class="justify-end text-gray-500 border focus:outline-none font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-none" type="button">
@@ -165,6 +194,8 @@
                     </tr>
                 </tbody>
             </table>
+
+            
              <!-- Pagination (Flowbite-style) -->
 
       <div class="flex justify-between items-center p-4">

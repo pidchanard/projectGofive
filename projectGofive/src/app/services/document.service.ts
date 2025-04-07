@@ -14,9 +14,10 @@ export class DocumentService {
   constructor(private http: HttpClient) {}
 
   // ✅ แก้ return type ทั้งหมดจาก Document → MyDocuments
-  getAllDocuments(): Observable<MyDocuments[]> {
-    return this.http.get<MyDocuments[]>(`${this.apiUrl}/alldoc`);
+  getAllDocuments(order: 'asc' | 'desc' = 'desc'): Observable<MyDocuments[]> {
+    return this.http.get<MyDocuments[]>(`${this.apiUrl}?order=${order}`);
   }
+  
   
   getDocumentById(DocId: number): Observable<MyDocuments> {
     return this.http.get<MyDocuments>(`${this.apiUrl}/${DocId}`);
@@ -35,7 +36,7 @@ export class DocumentService {
   }
 
   searchDocuments(keyword: string): Observable<MyDocuments[]> {
-    let params = new HttpParams().set('keyword', keyword);
+    const params = new HttpParams().set('keyword', keyword);
     return this.http.get<MyDocuments[]>(`${this.apiUrl}/search`, { params });
   }
 
