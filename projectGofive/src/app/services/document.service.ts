@@ -13,7 +13,7 @@ export class DocumentService {
 
   constructor(private http: HttpClient) {}
 
-  // ✅ แก้ return type ทั้งหมดจาก Document → MyDocuments
+ 
   getAllDocuments(order: 'asc' | 'desc' = 'desc'): Observable<MyDocuments[]> {
     return this.http.get<MyDocuments[]>(`${this.apiUrl}?order=${order}`);
   }

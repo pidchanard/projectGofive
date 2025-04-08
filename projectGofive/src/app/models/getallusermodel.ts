@@ -5,6 +5,7 @@ export interface Usery {
     email: string;
     phone: string;
     username: string;
+    createDate: string;
     password: string;
     roleId: number;
     role: Role;

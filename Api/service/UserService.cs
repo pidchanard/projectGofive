@@ -99,6 +99,7 @@ namespace Api.Data
         Phone = u.Phone,
         Username = u.Username,
         RoleId = u.RoleId,
+        CreateDate = u.CreateDate,
         Role = u.Role == null ? null : new RoleDto
         {
             RoleId = u.Role.RoleId,

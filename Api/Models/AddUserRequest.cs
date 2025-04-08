@@ -10,6 +10,7 @@ namespace Api.Controllers
         public int RoleId { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public DateTime CreateDate { get; set; }
         public List<PermissionRequest> Permissions { get; set; }
     }
 

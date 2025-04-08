@@ -156,7 +156,7 @@
               </button>
             </td>
             <td class="px-6 py-4">
-              <p>i forgot</p>
+              <p>{{ user.createDate | date: 'd MMM y' }}</p>
             </td>
             <td class="px-6 py-4">
               {{ user.role?.roleName || 'No Role' }}

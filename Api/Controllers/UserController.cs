@@ -24,6 +24,8 @@ namespace Api.Controllers
                 return BadRequest("Invalid request data.");
             }
 
+            var now = DateTime.Now;
+
             // สร้าง User object จากข้อมูลที่ได้รับ
             var user = new User
             {
@@ -34,7 +36,9 @@ namespace Api.Controllers
                 Phone = request.Phone,
                 Username = request.Username,
                 Password = request.Password,
-                RoleId = request.RoleId
+                RoleId = request.RoleId,
+                CreateDate = now 
+
             };
 
             // สร้าง UserPermission object

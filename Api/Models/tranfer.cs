@@ -6,6 +6,7 @@ public class UserDto
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
+    public DateTime CreateDate { get; set; }
     public int RoleId { get; set; }
     public RoleDto? Role { get; set; }
     public List<PermissionDto> Permissions { get; set; } = new();

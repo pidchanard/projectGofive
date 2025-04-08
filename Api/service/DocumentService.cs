@@ -96,10 +96,11 @@ namespace Api.Data
         {
             var documents = _context.Documents.AsQueryable();
 
+            // Handle nulls: ใช้ GetValueOrDefault หรือจัดการแบบ custom
             if (order == "asc")
-                documents = documents.OrderBy(d => d.DocDate);  // หรือ Field ที่ต้องการ
+                documents = documents.OrderBy(d => d.Doc_name);
             else
-                documents = documents.OrderByDescending(d => d.DocDate);
+                documents = documents.OrderByDescending(d => d.Doc_name);
 
             return await documents.ToListAsync();
         }

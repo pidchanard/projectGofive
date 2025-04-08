@@ -9,6 +9,7 @@ public class User
     public string? Phone { get; set; }
     public string? Username { get; set; }
     public string? Password { get; set; }
+    public DateTime CreateDate { get; set; }
     public int RoleId { get; set; }
 
     // เปลี่ยน ICollection เป็น IEnumerable
